@@ -1,0 +1,22 @@
+{
+  "name": "prompt-compiler-mcp",
+  "version": "0.1.0",
+  "description": "MCP Server wrapper for PromptCompiler — exposes compile-prompt as an MCP Prompt",
+  "main": "dist/index.js",
+  "bin": {
+    "prompt-compiler-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "prompt-compiler-core": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT"
+}

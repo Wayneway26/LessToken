@@ -1,0 +1,16 @@
+{
+  "name": "prompt-compiler-core",
+  "version": "0.1.0",
+  "description": "PromptCompiler Core SDK — 3-Tier Adaptive Routing & 5-Pillar Compilation Engine",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT"
+}

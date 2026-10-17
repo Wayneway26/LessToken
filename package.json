@@ -1,0 +1,20 @@
+{
+  "name": "prompt-compiler",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Chinese-to-English Master Prompt Optimizer — Monorepo",
+  "workspaces": [
+    "packages/core",
+    "packages/mcp-server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "compile": "tsc --build tsconfig.build.json",
+    "check": "tsc --build tsconfig.build.json --noEmit",
+    "clean": "rm -rf packages/*/dist"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

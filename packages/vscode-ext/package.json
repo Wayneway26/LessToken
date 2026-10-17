@@ -1,0 +1,108 @@
+{
+  "name": "prompt-compiler-vscode",
+  "displayName": "PromptCompiler — Chinese→English Prompt Optimizer",
+  "description": "Intercepts rough Chinese requests and compiles them into token-efficient, high-precision English prompts before sending to your AI coding agent.",
+  "version": "0.1.0",
+  "publisher": "prompt-compiler",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "promptCompiler.compileSelection",
+        "title": "PromptCompiler: Compile & Replace Selection"
+      },
+      {
+        "command": "promptCompiler.compileFromInputBox",
+        "title": "PromptCompiler: Compile from Input Box → Clipboard"
+      },
+      {
+        "command": "promptCompiler.openPanel",
+        "title": "PromptCompiler: Open Sidebar Panel"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "promptCompiler.compileSelection",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorHasSelection"
+      }
+    ],
+    "configuration": {
+      "title": "PromptCompiler",
+      "properties": {
+        "promptCompiler.provider": {
+          "type": "string",
+          "default": "vscode-lm",
+          "enum": [
+            "vscode-lm",
+            "openai-compat"
+          ],
+          "description": "LLM provider: 'vscode-lm' for zero-config IDE API, 'openai-compat' for BYOK."
+        },
+        "promptCompiler.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for OpenAI-compatible provider (BYOK)."
+        },
+        "promptCompiler.apiBaseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "Base URL for OpenAI-compatible API."
+        },
+        "promptCompiler.modelName": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "Model name for the LLM provider."
+        },
+        "promptCompiler.defaultTier": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "light",
+            "standard",
+            "heavy"
+          ],
+          "description": "Default complexity tier for prompt compilation."
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "promptCompiler",
+          "title": "PromptCompiler",
+          "icon": "$(sparkle)"
+        }
+      ]
+    },
+    "views": {
+      "promptCompiler": [
+        {
+          "type": "webview",
+          "id": "promptCompiler.panel",
+          "name": "Compiler"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "prompt-compiler-core": "file:../core"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.4.0"
+  }
+}

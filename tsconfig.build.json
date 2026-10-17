@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/vscode-ext" },
+    { "path": "packages/mcp-server" }
+  ]
+}
