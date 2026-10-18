@@ -10,7 +10,8 @@ A developer tool that intercepts rough Chinese requests **before** they reach yo
 packages/
 ├── core/          # prompt-compiler-core — 3-Tier Routing & 5-Pillar Engine
 ├── vscode-ext/    # prompt-compiler-vscode — VS Code Extension
-└── mcp-server/    # prompt-compiler-mcp — MCP Prompt Server
+├── mcp-server/    # prompt-compiler-mcp — MCP Prompt Server
+└── skill/         # less-token — Agent Skill (no API key required)
 ```
 
 ### Core Engine (3-Tier Adaptive Routing)
@@ -106,6 +107,32 @@ Then use the `compile-prompt` slash command in any MCP-compatible client.
 | `prompt-compiler-core` | SDK: compile(), detectTier(), buildSystemPrompt() | `packages/core/dist/index.js` |
 | `prompt-compiler-vscode` | VS Code extension with commands + webview panel | `packages/vscode-ext/dist/extension.js` |
 | `prompt-compiler-mcp` | MCP stdio server with `compile-prompt` Prompt | `packages/mcp-server/dist/index.js` |
+| `less-token` (skill) | Agent Skill — in-context compiler, zero config | `packages/skill/less-token/SKILL.md` |
+
+## 🧩 Agent Skill (no API key)
+
+`packages/skill/less-token/` packages the same routing rules and 5-pillar workflow as an
+Agent Skill. The host agent performs the compilation in-context, so there is no provider,
+no key, and no network call.
+
+```bash
+# install for all workspaces
+cp -r packages/skill/less-token ~/.workbuddy-ai/skills/less-token
+```
+
+Then ask, in Chinese, for a prompt — or invoke it explicitly:
+
+> 帮我把这段需求编译成英文 prompt
+
+The skill returns the compiled English prompt plus a 2-line Chinese trade-off summary.
+Tier routing can be checked deterministically:
+
+```bash
+python packages/skill/less-token/scripts/detect_tier.py --json "重构状态管理，保证数据一致性"
+# → {"tier": "heavy", "reason": "3 heavy keywords", ...}
+```
+
+Build a distributable zip with `python <skill-creator>/scripts/package_skill.py packages/skill/less-token`.
 
 ## 🔑 API
 
