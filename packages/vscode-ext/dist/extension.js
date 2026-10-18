@@ -1,0 +1,67 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.activate = activate;
+exports.deactivate = deactivate;
+const vscode = __importStar(require("vscode"));
+const commands_1 = require("./commands");
+const panel_1 = require("./webview/panel");
+/**
+ * Activates the PromptCompiler extension.
+ *
+ * Registers all commands and the sidebar webview view provider,
+ * then pushes disposables into the extension context so VS Code can
+ * clean them up on deactivation.
+ *
+ * @param context - The extension context provided by VS Code.
+ */
+function activate(context) {
+    const compileSelectionDisposable = vscode.commands.registerCommand('promptCompiler.compileSelection', commands_1.compileSelectionCommand);
+    const compileInputBoxDisposable = vscode.commands.registerCommand('promptCompiler.compileFromInputBox', commands_1.compileFromInputBoxCommand);
+    const openPanelDisposable = vscode.commands.registerCommand('promptCompiler.openPanel', () => vscode.commands.executeCommand('promptCompiler.panel.focus'));
+    const panelProvider = new panel_1.CompilerPanelProvider();
+    const panelDisposable = vscode.window.registerWebviewViewProvider(panel_1.CompilerPanelProvider.viewType, panelProvider);
+    context.subscriptions.push(compileSelectionDisposable, compileInputBoxDisposable, openPanelDisposable, panelDisposable);
+    console.log('PromptCompiler activated');
+}
+/**
+ * Deactivates the PromptCompiler extension.
+ *
+ * Currently a no-op; cleanup is handled by VS Code's disposable system.
+ */
+function deactivate() {
+    // intentionally empty
+}
+//# sourceMappingURL=extension.js.map

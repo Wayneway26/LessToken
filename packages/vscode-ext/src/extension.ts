@@ -22,6 +22,11 @@ export function activate(context: vscode.ExtensionContext): void {
     compileFromInputBoxCommand
   );
 
+  const openPanelDisposable = vscode.commands.registerCommand(
+    'promptCompiler.openPanel',
+    () => vscode.commands.executeCommand('promptCompiler.panel.focus')
+  );
+
   const panelProvider = new CompilerPanelProvider();
   const panelDisposable = vscode.window.registerWebviewViewProvider(
     CompilerPanelProvider.viewType,
@@ -31,6 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     compileSelectionDisposable,
     compileInputBoxDisposable,
+    openPanelDisposable,
     panelDisposable
   );
 
