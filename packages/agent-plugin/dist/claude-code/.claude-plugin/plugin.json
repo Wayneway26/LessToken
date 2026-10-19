@@ -1,0 +1,14 @@
+{
+  "name": "less-token",
+  "version": "0.1.0",
+  "description": "Compile a rough Chinese developer request into a precise, token-efficient English prompt for a coding agent.",
+  "author": {
+    "name": "LessToken"
+  },
+  "keywords": [
+    "prompt",
+    "chinese",
+    "translation",
+    "prompt-engineering"
+  ]
+}

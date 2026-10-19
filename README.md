@@ -9,6 +9,7 @@ A developer tool that intercepts rough Chinese requests **before** they reach yo
 ```
 packages/
 ├── core/          # prompt-compiler-core — 3-Tier Routing & 5-Pillar Engine
+├── agent-plugin/  # Enhance Prompt as a plugin for Claude Code / Codex / WorkBuddy / Cursor
 ├── vscode-ext/    # prompt-compiler-vscode — VS Code Extension
 └── mcp-server/    # prompt-compiler-mcp — MCP Prompt Server
 ```
@@ -106,6 +107,7 @@ Then use the `compile-prompt` slash command in any MCP-compatible client.
 | `prompt-compiler-core` | SDK: compile(), detectTier(), buildSystemPrompt() | `packages/core/dist/index.js` |
 | `prompt-compiler-vscode` | VS Code extension with commands + webview panel | `packages/vscode-ext/dist/extension.js` |
 | `prompt-compiler-mcp` | MCP stdio server with `compile-prompt` Prompt | `packages/mcp-server/dist/index.js` |
+| `agent-plugin` | One spec, rendered into Claude Code / Codex / WorkBuddy / Cursor plugins | `packages/agent-plugin/dist/` |
 
 ## 🔑 API
 
