@@ -10,7 +10,7 @@ The idea itself lives in one file — [`spec/enhance.md`](spec/enhance.md). Ever
 |---|---|---|---|
 | **Claude Code** | `.claude-plugin/plugin.json` + `commands/enhance.md` + `skills/less-token/` | `/enhance <text>`, or auto-trigger via the skill | copy `dist/claude-code` → `~/.claude/plugins/less-token/` |
 | **Codex CLI** | `prompts/enhance.md` | `/enhance <text>` | copy `dist/codex/prompts/enhance.md` → `~/.codex/prompts/enhance.md` |
-| **WorkBuddy** | `skills/less-token/SKILL.md` | natural language, e.g. "把这段编译成英文 prompt" | copy `dist/workbuddy/skills/less-token` → `~/.workbuddy-ai/skills/less-token` |
+| **WorkBuddy** | `.codebuddy-plugin/plugin.json` + `commands/enhance.md` + `skills/less-token/` | `/enhance <text>` from the input box, or auto-trigger via the skill | local marketplace, see below |
 | **Cursor** | `.cursor/rules/less-token.mdc` | agent applies the rule when relevant | copy `dist/cursor/.cursor` → project root |
 | **Any MCP client** | `packages/mcp-server` (already in this repo) | `compile-prompt` prompt | see the root README |
 
@@ -41,9 +41,46 @@ Then `/enhance <your Chinese request>`.
 
 ### WorkBuddy
 
-```bash
-cp -r packages/agent-plugin/dist/workbuddy/skills/less-token ~/.workbuddy-ai/skills/less-token
+WorkBuddy's extension unit is a **plugin**, not a skill directory. The manifest is
+`.codebuddy-plugin/plugin.json`; anything in `commands/` becomes a `/name` entry in the
+input box, which is the closest thing to an inline "Enhance" button that the host exposes.
+
+`dist/marketplace/` is a ready-made **directory marketplace** containing the plugin:
+
 ```
+dist/marketplace/
+├── .codebuddy-plugin/marketplace.json
+└── less-token/
+    ├── .codebuddy-plugin/plugin.json
+    ├── commands/enhance.md
+    └── skills/less-token/SKILL.md
+```
+
+Install it one of two ways.
+
+**A. Through the app (preferred)** — open the plugin/skill marketplace panel, add a local
+marketplace, and point it at `packages/agent-plugin/dist/marketplace`. The plugin appears as
+`less-token`; enable it, then restart the app.
+
+**B. By hand** — copy the plugin into the versioned cache and register it in three files:
+
+```bash
+CFG=~/.workbuddy-ai
+mkdir -p "$CFG/plugins/cache/less-token-local/less-token/0.1.0"
+cp -r packages/agent-plugin/dist/marketplace/less-token/. "$CFG/plugins/cache/less-token-local/less-token/0.1.0/"
+```
+
+Then add, respectively:
+
+- `plugins/known_marketplaces.json` → a `less-token-local` entry of `type: "directory"`
+- `plugins/installed_plugins.json` → `"less-token@less-token-local"` with `installPath` and `version`
+- `settings.json` → `enabledPlugins["less-token@less-token-local"] = true`
+
+Restart WorkBuddy. `/enhance` should appear in the `/` menu; typing
+`/enhance 帮我把这个模块的状态管理重构一下` compiles the text after the command.
+
+The same files also work as a plain skill if you only want the natural-language trigger:
+copy `dist/workbuddy/skills/less-token` → `~/.workbuddy-ai/skills/less-token`.
 
 ### Cursor
 
@@ -77,4 +114,4 @@ The command form keeps the user in control: explicit, one keystroke, visible res
 
 ## Status
 
-Spec and all four adapters are authored against current host formats (Claude Code plugin layout, Codex `~/.codex/prompts`, WorkBuddy skills, Cursor `.mdc` rules). None has been verified end-to-end in a live host yet — the first install of each is the test.
+Spec and all four adapters are authored against current host formats (Claude Code plugin layout, Codex `~/.codex/prompts`, WorkBuddy plugin + command, Cursor `.mdc` rules). The WorkBuddy plugin has been registered on this machine but not yet observed in a restarted app — the `/enhance` entry is the thing to check. The other three have not been verified end-to-end at all.

@@ -9,7 +9,7 @@
  * Usage: node packages/agent-plugin/build.mjs
  */
 
-import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, rmSync, cpSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -70,6 +70,32 @@ const TARGETS = [
     id: 'workbuddy',
     files: [
       {
+        // WorkBuddy reads .codebuddy-plugin/plugin.json (also accepts
+        // .workbuddy-plugin/ and .claude-plugin/). Without this manifest the
+        // directory is not a plugin — it is just loose files.
+        path: '.codebuddy-plugin/plugin.json',
+        json: {
+          name: 'less-token',
+          version: '0.1.0',
+          description: `${DESCRIPTION} Adds a /enhance command to the input box.`,
+          author: { name: 'LessToken' },
+          license: 'MIT',
+          keywords: ['prompt', 'chinese', 'translation', 'prompt-engineering'],
+          commands: './commands',
+          skills: './skills',
+        },
+      },
+      {
+        // This is what actually shows up in the input box "/" menu, with the
+        // description and argument hint rendered as the menu entry.
+        path: 'commands/enhance.md',
+        request: 'the text after this command (`$ARGUMENTS`)',
+        frontmatter: {
+          description: DESCRIPTION,
+          'argument-hint': '<chinese request>',
+        },
+      },
+      {
         path: 'skills/less-token/SKILL.md',
         request: "the user's current message",
         frontmatter: {
@@ -124,5 +150,40 @@ for (const target of TARGETS) {
     console.log(`  ${target.id}/${file.path.replaceAll('\\', '/')}`);
   }
 }
+
+// A directory marketplace is how a local plugin gets discovered: the app reads
+// <marketplace>/.codebuddy-plugin/marketplace.json, then installs the plugin it
+// points at into its own versioned cache. Emitted here so `node build.mjs`
+// always produces something the host can actually load.
+const MARKETPLACE = join(DIST, 'marketplace');
+const MARKETPLACE_NAME = 'less-token-local';
+
+mkdirSync(join(MARKETPLACE, '.codebuddy-plugin'), { recursive: true });
+cpSync(join(DIST, 'workbuddy'), join(MARKETPLACE, 'less-token'), { recursive: true });
+
+writeFileSync(
+  join(MARKETPLACE, '.codebuddy-plugin', 'marketplace.json'),
+  `${JSON.stringify(
+    {
+      name: MARKETPLACE_NAME,
+      description: 'Local marketplace for the LessToken prompt compiler plugin.',
+      owner: { name: 'LessToken' },
+      plugins: [
+        {
+          name: 'less-token',
+          source: './less-token',
+          description: `${DESCRIPTION} Adds a /enhance command to the input box.`,
+          version: '0.1.0',
+          category: 'productivity',
+        },
+      ],
+    },
+    null,
+    2,
+  )}\n`,
+  'utf8',
+);
+written += 1;
+console.log(`  marketplace/.codebuddy-plugin/marketplace.json (+ less-token/)`);
 
 console.log(`\n${written} files written to ${DIST}`);

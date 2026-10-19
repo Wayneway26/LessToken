@@ -1,0 +1,16 @@
+{
+  "name": "less-token-local",
+  "description": "Local marketplace for the LessToken prompt compiler plugin.",
+  "owner": {
+    "name": "LessToken"
+  },
+  "plugins": [
+    {
+      "name": "less-token",
+      "source": "./less-token",
+      "description": "Compile a rough Chinese developer request into a precise, token-efficient English prompt for a coding agent. Adds a /enhance command to the input box.",
+      "version": "0.1.0",
+      "category": "productivity"
+    }
+  ]
+}

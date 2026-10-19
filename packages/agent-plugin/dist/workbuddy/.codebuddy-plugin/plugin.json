@@ -1,0 +1,17 @@
+{
+  "name": "less-token",
+  "version": "0.1.0",
+  "description": "Compile a rough Chinese developer request into a precise, token-efficient English prompt for a coding agent. Adds a /enhance command to the input box.",
+  "author": {
+    "name": "LessToken"
+  },
+  "license": "MIT",
+  "keywords": [
+    "prompt",
+    "chinese",
+    "translation",
+    "prompt-engineering"
+  ],
+  "commands": "./commands",
+  "skills": "./skills"
+}
