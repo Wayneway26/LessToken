@@ -19,6 +19,32 @@ Two packaging strategies, deliberately kept separate:
 - **Instruction-only** (this package) — the host's own model does the compilation. No key, no server, no latency, works offline. This is the default.
 - **MCP server** (existing) — a separate process calls a model. Needed only when the host's model should not spend tokens on compilation, or when you want one fixed model regardless of host.
 
+## Why there is no button in the input box
+
+WorkBuddy's plugin surface has exactly these component directories: `commands/`, `skills/`,
+`agents/`, `hooks/`, `output-styles/` (plus `themes/` and `monitors/`, recognized but not
+loaded), and the manifest's `mcpServers` / `lspServers`. Every one of them extends what
+the *model* can do or what appears in the `/` menu. None of them can inject UI into the chat
+input. The renderer is a packed asar with no extension point, so "put a button next to Send"
+is not something a third-party plugin can do on any current host — Claude Code, Codex, Cursor
+and WorkBuddy are all the same here.
+
+There is a related finding worth recording: WorkBuddy already ships the backend for this.
+`app.asar` contains an IPC channel `llm:enhancePrompt`, a feature id `enhance-prompt`, and a
+ready-made prompt-engineering system prompt ("You are a Prompt Engineering Expert specializing
+in improving user prompts for a development code assistant…"), reaching an
+`/api/v1/llm/completions` endpoint. Nothing in the renderer calls it — the provider function
+exists, no component imports it. So the capability is present but unexposed in this build.
+That is an official feature waiting to be turned on, not a hook we can reach from a plugin.
+
+What is actually reachable, closest first:
+
+1. `/enhance` — a `/` menu entry, one keystroke. Shipped here.
+2. `UserPromptSubmit` hook — zero clicks, but it appends `additionalContext`; it cannot replace
+   the text the user typed, and silent rewriting is exactly the failure mode we avoid.
+3. An always-on-top overlay anchored to the input box — a real button that also works over
+   every other app, but it lives outside the host, as a separate process.
+
 ## Install
 
 ### Claude Code
